@@ -175,7 +175,7 @@ if os.path.exists(uploaded_file_path):
             else:
                 try:
                     # Create a meaningful file name
-                    file_name = f"{customer1}-{model1} Vs {customer2}-{model2}.xlsx"
+                    file_name = f"{customer1}{model1} Vs {customer2}{model2}.xlsx"
                     save_path = os.path.join(custom_download_path, file_name)
 
                     # Create the comparison sheet
