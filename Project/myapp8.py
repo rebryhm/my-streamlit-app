@@ -132,6 +132,7 @@ if os.path.exists(uploaded_file_path):
         latest_data = load_and_preprocess(uploaded_file_path)
         st.subheader("Latest Dataset Preview")
         st.write(latest_data)
+        
 
         # Normalize column names for consistency
         latest_data.columns = latest_data.columns.str.strip().str.lower()
@@ -164,37 +165,40 @@ if os.path.exists(uploaded_file_path):
                 st.write(model2_details)
                 st.write(f"Customer: {customer2}")
 
-# Allow user to specify download location
-st.subheader("Download Comparison Sheet")
-custom_download_path = st.text_input("Specify the directory path to save the file:", value="C:/Users/YourName/Desktop")
+        # Allow user to specify download location
+        st.subheader("Download Comparison Sheet")
+        custom_download_path = st.text_input("Specify the directory path to save the file:", value="C:/Users/YourName/Desktop")
 
-if st.button("Get Comparison Sheet"):
-    if model1_details.empty or model2_details.empty:
-        st.error("One or both models do not have valid details. Please select valid models.")
-    else:
-        try:
-            # Create a meaningful file name
-            file_name = f"{customer1}-{model1} Vs {customer2}-{model2}.xlsx"
-            save_path = os.path.join(custom_download_path, file_name)
+        if st.button("Get Comparison Sheet"):
+            if model1_details.empty or model2_details.empty:
+                st.error("One or both models do not have valid details. Please select valid models.")
+            else:
+                try:
+                    # Create a meaningful file name
+                    file_name = f"{customer1}-{model1} Vs {customer2}-{model2}.xlsx"
+                    save_path = os.path.join(custom_download_path, file_name)
 
-            # Create the comparison sheet
-            comparison_sheet = pd.concat([model1_details.T, model2_details.T], axis=1)
-            comparison_sheet.columns = [model1, model2]
+                    # Create the comparison sheet
+                    comparison_sheet = pd.concat([model1_details.T, model2_details.T], axis=1)
+                    comparison_sheet.columns = [model1, model2]
 
-            # Save to buffer
-            buffer = BytesIO()
-            comparison_sheet.to_excel(buffer, index=True)
-            buffer.seek(0)
+                    # Save to buffer
+                    buffer = BytesIO()
+                    comparison_sheet.to_excel(buffer, index=True)
+                    buffer.seek(0)
 
-            # Provide download button for the generated file
-            st.download_button(
-                label="Download Comparison Sheet",
-                data=buffer,
-                file_name=file_name,
-                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            )
+                    # Provide download button for the generated file
+                    st.download_button(
+                        label="Download Comparison Sheet",
+                        data=buffer,
+                        file_name=file_name,
+                        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    )
 
-            st.success(f"The comparison sheet has been saved as {file_name}.")
-        except Exception as e:
-            st.error(f"Error generating the file: {e}")
+                    st.success(f"The comparison sheet has been saved as {file_name}.")
+                except Exception as e:
+                    st.error(f"Error generating the file: {e}")
+    except Exception as e:
+        st.error(f"Error loading or processing the uploaded file: {e}")
+
 
